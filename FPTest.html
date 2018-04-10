@@ -1,0 +1,85 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+ 	<meta charset="UTF-8"> 
+ 	<title>FPTest 1</title> 
+ 	<script type="text/javascript" src="babylon.custom.js"></script> 
+ 	<link rel="stylesheet" type="text/css" href="Asdos I.css">
+
+ 	
+</head> 
+
+<body> 
+ 	<canvas id = "renderCanvas"></canvas> 
+ 	<script> 
+    var canvas, engine, scene, camera, ground;
+  		document.addEventListener("DOMContentLoaded", function(){ 
+   // Get canvas 
+   		canvas = document.getElementById("renderCanvas"); 
+
+   // Create babylon engine 
+   		engine = new BABYLON.Engine(canvas, true); 
+
+   // Create Scene 
+   		scene = new BABYLON.Scene(engine); 
+
+   		gravity = new BABYLON.Vector3(0, -9.81, 0);
+
+   		physicsEngine = new BABYLON.CannonJSPlugin();
+
+   		scene.enablePhysics(gravity, physicsEngine);
+
+   		ground = new BABYLON.Mesh.CreateGround("ground", 100, 100, 1, scene);
+      //ground.material = terrain.material;
+      //ground.diffuseTexture = new BABYLON.Texture("basketball-court-vector.png")
+
+   		ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.2, friction: 0.2}, scene);
+
+
+   // Create FreeCamera 
+   		// camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0,0,10),scene) 
+   		// camera.setTarget(new BABYLON.Vector3(0,0,0)); 
+   		// camera.attachControl(canvas); 
+      camera = new BABYLON.ArcRotateCamera("Camera", 0, 0 , 10, new BABYLON.Vector3(0, 0, 0),scene);
+
+      camera.setPosition(new BABYLON.Vector3(0, 5, 20));
+
+      camera.attachControl(canvas, true);
+
+      var mat = new BABYLON.StandardMaterial("material", scene);
+
+      mat.diffuseColor = new BABYLON.Color3(1, 0, 0);
+      mat.specularColor = new BABYLON.Color3(0, 1, 0);
+      mat.specularPower = 25
+      // mat.diffuseTexture = new BABYLON.Texture("assets/grass.png", scene);
+      // mat.specularTexture = new BABYLON.Texture("assets/doge.jpeg", scene);
+      mat.ambientColor = new BABYLON.Color3(0, 23, 0, 98, 0, 53);
+      mat.alpha = 1;
+
+   // Create Light 
+      var light = new BABYLON.HemisphericLight("hLight", new BABYLON.Vector3(0,8,0), scene); 
+
+      // var mat = createMat();
+
+      var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter : 2}, scene); //default sphere
+      sphere.position = new BABYLON.Vector3(0,10,0);
+      sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, {mass:2, restitution:4.0, friction:0.2}, scene);
+
+      sphere.physicsImpostor.registerOnPhysicsCollide(ground.physicsImpostor, function (main,collided) {
+      		console.log(main.object.position);
+      });
+
+
+
+      engine.runRenderLoop(function(){ 
+        window.onkeydown = function(event) {
+
+          }
+        
+
+        scene.render(); 
+         }); 
+      }); 
+ 	</script> 
+</body> 
+</html>
